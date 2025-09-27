@@ -13,6 +13,8 @@ class Pokemon:
         self.name = self.get_name()
         self.ability = self.get_ability()
         self.index = self.get_index()
+        self.hp = randint(200,400)
+        self.power = randint(30, 60)
         Pokemon.pokemons[pokemon_trainer] = self
 
     # Метод для получения картинки покемона через API
@@ -53,11 +55,45 @@ class Pokemon:
 
     # Метод класса для получения информации
     def info(self):
-        return f"Имя твоего покеомона: {self.name}\nспособность твоего покемона:{self.ability}\nиндекс твоего покемона:{self.index}"
+        return f"Имя твоего покеомона: {self.name}\nспособность твоего покемона:{self.ability}\nиндекс твоего покемона:{self.index}\nжизни твоего покемона: {self.hp}\nсила твоего покемона: {self.power}"
+    def attack(self, enemy):
+        if isinstance(enemy, Wizard):
+            chance = randint(1,5)
+            if chance == 1:
+                return "Покемон противник применил щит сражений"
+        if enemy.hp > self.power:
+            enemy.hp -= self.power
+            return f"Сражение @{self.pokemon_trainer} с @{enemy.pokemon_trainer} здоровье @ {enemy.pokemon_trainer} теперь {enemy.hp}"
+        else:
+            enemy.hp = 0
+            return f"Победа @{self.pokemon_trainer} над @{enemy.pokemon_trainer}"
+
 
     # Метод класса для получения картинки покемона
     def show_img(self):
         return self.img
+class Wizard(Pokemon):
+    def info(self):
+        return f"У тебя покемон волшебник\n\n" + super().info()
+class Fighter(Pokemon):
+    def attack(self, enemy):
+        super_power = randint(5, 15)
+        self.power += super_power
+        result = super().attack(enemy)
+        self.power -= super_power
+        return result + f"\nбоец применил супер атаку силы: {super_power}"
+    def info(self):
+        return f"У тебя покемон боец\n\n" + super().info()
+if __name__ == '__main__':
+    wizard = Wizard("username1")
+    fighter = Fighter("username2")
+
+    print(wizard.info())
+    print()
+    print(fighter.info())
+    print()
+    print(fighter.attack(wizard))      
+
 
 
 
