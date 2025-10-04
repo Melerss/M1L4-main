@@ -1,5 +1,6 @@
 from random import randint
 import requests
+from datetime import timedelta, datetime
 
 class Pokemon:
     pokemons = {}
@@ -15,8 +16,21 @@ class Pokemon:
         self.index = self.get_index()
         self.hp = randint(200,400)
         self.power = randint(30, 60)
+        self.last_feed_time = datetime.now()
         Pokemon.pokemons[pokemon_trainer] = self
 
+
+
+    def feed(self, feed_interval = 20, hp_increase = 10 ):
+        current_time = datetime.now() 
+        delta_time = timedelta(seconds=feed_interval)  
+        if (current_time - self.last_feed_time) > delta_time:
+            self.hp += hp_increase
+            self.last_feed_time = current_time
+            return f"Здоровье покемона увеличено. Текущее здоровье: {self.hp}"
+        else:
+            return f"Следующее время кормления покемона: {current_time-delta_time}"
+        
     # Метод для получения картинки покемона через API
     def get_img(self):
         url = f'https://pokeapi.co/api/v2/pokemon/{self.pokemon_number}'
@@ -75,6 +89,8 @@ class Pokemon:
 class Wizard(Pokemon):
     def info(self):
         return f"У тебя покемон волшебник\n\n" + super().info()
+    def feed(self):
+        return super().feed(hp_increase= 20)
 class Fighter(Pokemon):
     def attack(self, enemy):
         super_power = randint(5, 15)
@@ -84,6 +100,8 @@ class Fighter(Pokemon):
         return result + f"\nбоец применил супер атаку силы: {super_power}"
     def info(self):
         return f"У тебя покемон боец\n\n" + super().info()
+    def feed(self):
+        return super().feed(feed_interval= 10)
 if __name__ == '__main__':
     wizard = Wizard("username1")
     fighter = Fighter("username2")
